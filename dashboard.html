@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Index</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0c0f;
+            --bg-2: #0d0f13;
+            --surface: rgba(255, 255, 255, 0.045);
+            --surface-hover: rgba(255, 255, 255, 0.075);
+            --hairline: rgba(255, 255, 255, 0.09);
+            --text: #edeef0;
+            --text-muted: #8a8f98;
+            --text-faint: #565a62;
+            --brass: #c9a765;
+            --brass-dim: rgba(201, 167, 101, 0.35);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background:
+                radial-gradient(ellipse 900px 500px at 15% -10%, rgba(201, 167, 101, 0.06), transparent 60%),
+                radial-gradient(ellipse 700px 600px at 100% 0%, rgba(120, 140, 255, 0.04), transparent 60%),
+                var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* ---------- top chrome ---------- */
+        .chrome {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px clamp(20px, 5vw, 64px);
+            background: rgba(10, 12, 15, 0.72);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--hairline);
+        }
+
+        .mark {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .mark .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--brass);
+            box-shadow: 0 0 8px var(--brass);
+        }
+
+        .readout {
+            display: flex;
+            gap: 18px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.06em;
+            color: var(--text-faint);
+        }
+
+        .readout span b {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .readout .live b {
+            color: #5fd9a4;
+        }
+
+        @media (max-width:640px) {
+            .readout {
+                display: none;
+            }
+        }
+
+        /* ---------- hero ---------- */
+        .hero {
+            padding: clamp(64px, 10vw, 120px) clamp(20px, 5vw, 64px) 56px;
+            max-width: 1100px;
+        }
+
+        .eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--brass);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .eyebrow::before {
+            content: '';
+            width: 24px;
+            height: 1px;
+            background: var(--brass-dim);
+        }
+
+        h1 {
+            font-family: 'Fraunces', serif;
+            font-weight: 500;
+            font-size: clamp(34px, 5.4vw, 64px);
+            line-height: 1.08;
+            letter-spacing: -0.01em;
+            max-width: 14ch;
+        }
+
+        h1 em {
+            font-style: italic;
+            font-weight: 300;
+            color: var(--text-muted);
+        }
+
+        .sub {
+            margin-top: 22px;
+            max-width: 46ch;
+            font-size: 15.5px;
+            line-height: 1.65;
+            color: var(--text-muted);
+        }
+
+        .sub strong {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* ---------- grid ---------- */
+        .grid-wrap {
+            padding: 0 clamp(20px, 5vw, 64px) 100px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+        }
+
+        @media (max-width:1100px) {
+            .grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width:780px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width:500px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            position: relative;
+            border-radius: 16px;
+            border: 1px solid var(--hairline);
+            background: var(--surface);
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity .6s cubic-bezier(.2, .7, .3, 1), transform .6s cubic-bezier(.2, .7, .3, 1),
+                border-color .35s ease, background .35s ease, box-shadow .35s ease;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card.in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card:hover {
+            background: var(--surface-hover);
+            border-color: var(--glow, var(--hairline));
+            box-shadow: 0 0 0 1px var(--glow-soft, transparent), 0 18px 40px -18px var(--glow-shadow, transparent);
+            transform: translateY(-3px);
+        }
+
+        .pane {
+            position: relative;
+            height: 130px;
+            overflow: hidden;
+            border-bottom: 1px solid var(--hairline);
+        }
+
+        .field-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* fills the pane without distorting */
+            object-position: top;
+            /* shows the top of the homepage, not the middle */
+            display: block;
+        }
+
+        .pane .field {
+            position: absolute;
+            inset: -20%;
+            background: var(--field);
+            opacity: 0.85;
+            transition: transform .6s ease, opacity .4s ease;
+            filter: saturate(1.05);
+        }
+
+        .card:hover .pane .field {
+            transform: scale(1.08);
+            opacity: 1;
+        }
+
+        .pane .glyph {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.85);
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+        }
+
+        .pane::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.35) 100%);
+        }
+
+        .meta {
+            padding: 16px 18px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .meta .name {
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .meta .tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
+            letter-spacing: 0.05em;
+            color: var(--text-faint);
+            text-transform: uppercase;
+        }
+
+        .meta .open {
+            margin-top: 10px;
+            font-size: 11.5px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            opacity: 0;
+            transform: translateX(-4px);
+            transition: opacity .3s ease, transform .3s ease, color .3s ease;
+        }
+
+        .card:hover .meta .open {
+            opacity: 1;
+            transform: translateX(0);
+            color: var(--glow);
+        }
+
+        .meta .open svg {
+            width: 11px;
+            height: 11px;
+        }
+
+        /* ---------- footer ---------- */
+        footer {
+            padding: 28px clamp(20px, 5vw, 64px) 50px;
+            border-top: 1px solid var(--hairline);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-faint);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .card,
+            .pane .field,
+            .meta .open {
+                transition: none !important;
+            }
+
+            .card {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        a:focus-visible,
+        .card:focus-visible {
+            outline: 2px solid var(--brass);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="chrome">
+        <div class="mark"><span class="dot"></span> My Projects</div>
+
+    </div>
+
+    <section class="hero">
+        <div class="eyebrow">Field notes from the build log</div>
+        <h1>Every world I've<br>built, <em>lit up</em><br>in one room.</h1>
+        <p class="sub">Twelve projects, Twelve different visual languages — cyberpunk to parchment, neon gym to
+            candlelit dining room. <strong>Hover a window to see it glow.</strong> Click through to open.</p>
+    </section>
+
+    <div class="grid-wrap">
+        <div class="grid" id="grid">
+
+            <!-- Forge -->
+            <a class="card" href="https://archi-cell.github.io/Forge/" target="_blank" rel="noopener"
+                style="--glow:#ff6a3d; --glow-soft:rgba(255,106,61,.5); --glow-shadow:rgba(255,106,61,.25);">
+                <div class="pane">
+                    <img class="field-img" src="images/AI.png" alt="IronPeak homepage screenshot">
+                </div>
+                <div class="meta">
+                    <span class="tag">Landing Page</span>
+                    <span class="name">Forge - AI Prompt Generator</span>
+                    <span class="open">Open project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M7 17 17 7M7 7h10v10" />
+                        </svg></span>
+                </div>
+            </a>
+
+
+            <!-- Aurora -->
+            <a class="card" href="https://archi-cell.github.io/Aurora/" target="_blank" rel="noopener"
+                style="--glow:#ff6a3d; --glow-soft:rgba(255,106,61,.5); --glow-shadow:rgba(255,106,61,.25);">
+                <div class="pane">
+                    <img class="field-img" src="images/aurora.png" alt="IronPeak homepage screenshot">
+                </div>
+                <div class="meta">
+                    <span class="tag">Landing Page</span>
+                    <span class="name">Aurora - Weather App</span>
+                    <span class="open">Open project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M7 17 17 7M7 7h10v10" />
+                        </svg></span>
+                </div>
+            </a>
+
+
+
+
+            <!-- IronPeak -->
+            <a class="card" href="https://archi-cell.github.io/IronPeak/" target="_blank" rel="noopener"
+                style="--glow:#ff6a3d; --glow-soft:rgba(255,106,61,.5); --glow-shadow:rgba(255,106,61,.25);">
+                <div class="pane">
+                    <img class="field-img" src="images/IronPeak.png" alt="IronPeak homepage screenshot">
+                </div>
+                <div class="meta">
+                    <span class="tag">Landing Page</span>
+                    <span class="name">IronPeak - Premium Fitness Website Template</span>
+                    <span class="open">Open project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M7 17 17 7M7 7h10v10" />
+                        </svg></span>
+                </div>
+            </a>
+
+
+
+            <!-- Dusk Dining -->
+            <a class="card" href="https://archi-cell.github.io/Dusk-Dining/" target="_blank" rel="noopener"
+                style="--glow:#ff6a3d; --glow-soft:rgba(255,106,61,.5); --glow-shadow:rgba(255,106,61,.25);">
+                <div class="pane">
+                    <img class="field-img" src="images/dusk.png" alt="IronPeak homepage screenshot">
+                </div>
+                <div class="meta">
+                    <span class="tag">Landing Page</span>
+                    <span class="name">Dusk-Dining : A Premium Restaurant Website Template</span>
+                    <span class="open">Open project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M7 17 17 7M7 7h10v10" />
+                        </svg></span>
+                </div>
+            </a>
+
+
+            <!-- Vanguard -->
+            <a class="card" href="https://archi-cell.github.io/Vanguard/" target="_blank" rel="noopener"
+                style="--glow:#ff6a3d; --glow-soft:rgba(255,106,61,.5); --glow-shadow:rgba(255,106,61,.25);">
+                <div class="pane">
+                    <img class="field-img" src="images/meme.png" alt="IronPeak homepage screenshot">
+                </div>
+                <div class="meta">
+                    <span class="tag">Landing Page</span>
+                    <span class="name">Vanguard - Meme Generator</span>
+                    <span class="open">Open project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M7 17 17 7M7 7h10v10" />
+                        </svg></span>
+                </div>
+            </a>
+
+
+            <!-- CrewConnect -->
+            <a class="card" href="https://archi-cell.github.io/AgeWise/" target="_blank" rel="noopener"
+                style="--glow:#ff6a3d; --glow-soft:rgba(255,106,61,.5); --glow-shadow:rgba(255,106,61,.25);">
+                <div class="pane">
+                    <img class="field-img" src="images/Age.png" alt="IronPeak homepage screenshot">
+                </div>
+                <div class="meta">
+                    <span class="tag">Landing Page</span>
+                    <span class="name">AgeWise - Age Calculator</span>
+                    <span class="open">Open project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M7 17 17 7M7 7h10v10" />
+                        </svg></span>
+                </div>
+            </a>
+
+
+            <!-- GRADIENTZ -->
+            <a class="card" href="https://archi-cell.github.io/Gradientz/" target="_blank" rel="noopener"
+                style="--glow:#ff6a3d; --glow-soft:rgba(255,106,61,.5); --glow-shadow:rgba(255,106,61,.25);">
+                <div class="pane">
+                    <img class="field-img" src="images/Gradientz.png" alt="IronPeak homepage screenshot">
+                </div>
+                <div class="meta">
+                    <span class="tag">Landing Page</span>
+                    <span class="name">Gradientz - Gradient Generator</span>
+                    <span class="open">Open project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M7 17 17 7M7 7h10v10" />
+                        </svg></span>
+                </div>
+            </a>
+
+
+            <!-- Luminary -->
+            <a class="card" href="https://archi-cell.github.io/Luminary/" target="_blank" rel="noopener"
+                style="--glow:#ff6a3d; --glow-soft:rgba(255,106,61,.5); --glow-shadow:rgba(255,106,61,.25);">
+                <div class="pane">
+                    <img class="field-img" src="images/luminary.png" alt="IronPeak homepage screenshot">
+                </div>
+                <div class="meta">
+                    <span class="tag">Landing Page</span>
+                    <span class="name">Luminary - Random Quote Generator</span>
+                    <span class="open">Open project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M7 17 17 7M7 7h10v10" />
+                        </svg></span>
+                </div>
+            </a>
+
+
+            <!-- Password Generator -->
+            <a class="card" href="https://archi-cell.github.io/mainframe/" target="_blank" rel="noopener"
+                style="--glow:#ff6a3d; --glow-soft:rgba(255,106,61,.5); --glow-shadow:rgba(255,106,61,.25);">
+                <div class="pane">
+                    <img class="field-img" src="images/mainframe.png" alt="IronPeak homepage screenshot">
+                </div>
+                <div class="meta">
+                    <span class="tag">Landing Page</span>
+                    <span class="name">Mainframe - Secure Password Generator</span>
+                    <span class="open">Open project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M7 17 17 7M7 7h10v10" />
+                        </svg></span>
+                </div>
+            </a>
+
+
+            <!--Amber-->
+            <a class="card" href="https://archi-cell.github.io/Amber/" target="_blank" rel="noopener"
+                style="--glow:#ff6a3d; --glow-soft:rgba(255,106,61,.5); --glow-shadow:rgba(255,106,61,.25);">
+                <div class="pane">
+                    <img class="field-img" src="images/Amber.png" alt="IronPeak homepage screenshot">
+                </div>
+                <div class="meta">
+                    <span class="tag">Landing Page</span>
+                    <span class="name">Amber & Ash</span>
+                    <span class="open">Open project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M7 17 17 7M7 7h10v10" />
+                        </svg></span>
+                </div>
+            </a>
+
+
+            <!-- Jack 3D Creator -->
+            <a class="card" href="https://archi-cell.github.io/Me/" target="_blank" rel="noopener"
+                style="--glow:#ff6a3d; --glow-soft:rgba(255,106,61,.5); --glow-shadow:rgba(255,106,61,.25);">
+                <div class="pane">
+                    <img class="field-img" src="images/me.png" alt="IronPeak homepage screenshot">
+                </div>
+                <div class="meta">
+                    <span class="tag">Landing Page</span>
+                    <span class="name">Portfolio</span>
+                    <span class="open">Open project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M7 17 17 7M7 7h10v10" />
+                        </svg></span>
+                </div>
+            </a>
+
+            <a class="card" href="https://archi-cell.github.io/Game/" target="_blank" rel="noopener"
+                style="--glow:#ff6a3d; --glow-soft:rgba(255,106,61,.5); --glow-shadow:rgba(255,106,61,.25);">
+                <div class="pane">
+                    <img class="field-img" src="images/Game.png" alt="IronPeak homepage screenshot">
+                </div>
+                <div class="meta">
+                    <span class="tag">Landing Page</span>
+                    <span class="name">Game Dashboard</span>
+                    <span class="open">Open project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M7 17 17 7M7 7h10v10" />
+                        </svg></span>
+                </div>
+            </a>
+
+
+        </div>
+    </div>
+
+    <footer>
+        <span>Project Index — updated June 2026</span>
+        <span>Built single-file, no framework</span>
+    </footer>
+
+    <script>
+        const cards = document.querySelectorAll('.card');
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (reduceMotion) {
+            cards.forEach(c => c.classList.add('in'));
+        } else {
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach((entry, i) => {
+                    if (entry.isIntersecting) {
+                        const idx = Array.from(cards).indexOf(entry.target);
+                        setTimeout(() => entry.target.classList.add('in'), (idx % 4) * 70);
+                        io.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15 });
+            cards.forEach(c => io.observe(c));
+        }
+    </script>
+
+</body>
+
+</html>
